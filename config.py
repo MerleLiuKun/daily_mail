@@ -10,6 +10,7 @@ receiver = ""
 
 # crawler
 AREA = "china/beijing/chaoyang-district"
+AREA_LOCATION = "116.65,39.92"  # 通州区
 
 # image
 IMAGE_FILE_PATH = ""

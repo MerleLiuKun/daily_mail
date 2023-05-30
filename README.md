@@ -6,7 +6,8 @@ Email
 数据来源
 --------
 
-- [墨迹天气](https://tianqi.moji.com/)
+- ~~[墨迹天气](https://tianqi.moji.com/)~~
+- [彩云天气](https://caiyunapp.com/api/weather_intro.html)
 - [一个](http://wufazhuce.com/)
 - [星座屋](https://www.xzw.com/) 
 - [一言](https://hitokoto.cn/)

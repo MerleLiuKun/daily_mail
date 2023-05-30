@@ -26,6 +26,21 @@ class Weather:
     def get_air_color(self):
         return AIR_BACK_COLOR.get(self.air_level)
 
+    def get_air_level(self):
+        air = int(self.air)
+        if air < 50:
+            return "level_1"
+        elif air < 100:
+            return "level_2"
+        elif air < 150:
+            return "level_3"
+        elif air < 200:
+            return "level_4"
+        elif air < 300:
+            return "level_5"
+        else:
+            return "level_6"
+
 
 @dataclass
 class Image:
