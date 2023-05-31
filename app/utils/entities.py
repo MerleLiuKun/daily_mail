@@ -22,6 +22,10 @@ class Weather:
     wind: str
     air: str
     air_level: str
+    air_show: str = ""
+
+    def __post_init__(self):
+        self.air_show = self.air
 
     def get_air_color(self):
         return AIR_BACK_COLOR.get(self.air_level)
@@ -29,16 +33,22 @@ class Weather:
     def get_air_level(self):
         air = int(self.air)
         if air < 50:
+            self.air_show = f"{air} 优"
             return "level_1"
         elif air < 100:
+            self.air_show = f"{air} 良"
             return "level_2"
         elif air < 150:
+            self.air_show = f"{air} 轻度污染"
             return "level_3"
         elif air < 200:
+            self.air_show = f"{air} 中度污染"
             return "level_4"
         elif air < 300:
+            self.air_show = f"{air} 重度污染"
             return "level_5"
         else:
+            self.air_show = f"{air} 严重污染"
             return "level_6"
 
 

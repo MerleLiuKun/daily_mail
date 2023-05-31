@@ -18,13 +18,12 @@
     <div style="display: flex;margin-top:10px;height: 30px;line-height: 30px;justify-content: space-around;align-items: center;">
         <span style="width:15%; text-align:center;">{{ weather.day }}</span>
         <div style="width:25%; text-align:center;">
-            <img height="20" width="20" style="vertical-align:middle;"
-                 src="{{ weather.wea_icon }}" alt="">
+            <!-- <img height="20" width="20" style="vertical-align:middle;" src="{{ weather.wea_icon }}" alt=""> -->
             <span style="display:inline-block">{{ weather.wea }}</span>
         </div>
         <span style="width:25%; text-align:center;">{{ weather.temp }}</span>
         <div style="width:35%; ">
-            <span style="display:inline-block;padding:0 8px;line-height:25px;color:{{ weather.get_air_color() }}; border-radius:15px; text-align:center;">{{ weather.air }}</span>
+            <span style="display:inline-block;padding:0 8px;line-height:25px;color:{{ weather.get_air_color() }}; border-radius:15px; text-align:center;">{{ weather.air_show }}</span>
         </div>
     </div>
     {% endfor %}
