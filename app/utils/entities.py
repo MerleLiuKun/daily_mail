@@ -4,6 +4,7 @@
 from dataclasses import dataclass
 
 AIR_BACK_COLOR = {
+    "": "",
     "level_1": "#8fc31f",
     "level_2": "#d7af0e",
     "level_3": "#f39800",
@@ -31,6 +32,9 @@ class Weather:
         return AIR_BACK_COLOR.get(self.air_level)
 
     def get_air_level(self):
+        if not self.air:
+            self.air_show = ""
+            return ""
         air = int(self.air)
         if air < 50:
             self.air_show = f"{air} 优"

@@ -34,7 +34,7 @@ WEA_MAPPING = {
 
 class WeatherCaiyun:
     def __init__(self):
-        self.base_url = f"https://api.caiyunapp.com/v2.6/TAkhjf8d1nlSlspN/{config.AREA_LOCATION}/daily?dailysteps=5"
+        self.base_url = f"https://api.caiyunapp.com/v2.6/{config.CAIYUN_KEY}/{config.AREA_LOCATION}/daily?dailysteps=5"
         self.data = None
 
     def __enter__(self):

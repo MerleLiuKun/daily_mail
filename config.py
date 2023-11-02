@@ -28,6 +28,11 @@ PG_USER = "ikaros"
 PG_PASSWORD = "123456"
 PG_DB = "love_db"
 
+# weather
+CAIYUN_KEY = "xxx"
+HEFENG_KEY = "xxx"
+HEFENG_LOCATION = "101010100"  # 北京市
+
 try:
     from local_settings import *
 except ImportError:

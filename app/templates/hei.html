@@ -22,9 +22,11 @@
             <span style="display:inline-block">{{ weather.wea }}</span>
         </div>
         <span style="width:25%; text-align:center;">{{ weather.temp }}</span>
+        {% if weather.air_show %}
         <div style="width:35%; ">
             <span style="display:inline-block;padding:0 8px;line-height:25px;color:{{ weather.get_air_color() }}; border-radius:15px; text-align:center;">{{ weather.air_show }}</span>
         </div>
+        {% endif %}
     </div>
     {% endfor %}
 
