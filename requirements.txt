@@ -3,7 +3,7 @@ selenium==3.141.0
 pillow==9.3.0
 beautifulsoup4==4.8.2
 lxml==4.9.1
-requests==2.25.0
+requests==2.31.0
 Jinja2==2.11.3
 sentry-sdk==0.14.3
 psycopg2-binary==2.8.6
