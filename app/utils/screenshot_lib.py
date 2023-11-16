@@ -6,7 +6,9 @@ from typing import Optional, Tuple
 
 from PIL import Image
 from selenium.webdriver import Chrome
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
 
@@ -34,7 +36,8 @@ class Driver:
     def initial(self) -> None:
         options = Options()
         options.headless = True
-        self.driver = Chrome(executable_path=self.driver_path, options=options)
+        service = Service(executable_path=self.driver_path)
+        self.driver = Chrome(service=service, options=options)
 
     def save_screenshot(
             self,
@@ -69,7 +72,7 @@ class Driver:
             self.driver.save_screenshot(filename)
             if class_name is not None:
                 top_offset = 0
-                elem = self.driver.find_element_by_class_name(class_name)
+                elem = self.driver.find_element(By.CLASS_NAME, class_name)
                 if xzw:
                     height = self.get_xzw_height(elem)
                     top_offset = self.get_xzw_top_offset(elem)
@@ -125,9 +128,9 @@ class Driver:
 
         Returns: int
         """
-        top_height = c_main.find_element_by_class_name("top").size["height"]
-        dl_height = c_main.find_element_by_tag_name("dl").size["height"]
-        cont_height = c_main.find_element_by_class_name("c_cont").size["height"]
+        top_height = c_main.find_element(By.CLASS_NAME, "top").size["height"]
+        dl_height = c_main.find_element(By.TAG_NAME, "dl").size["height"]
+        cont_height = c_main.find_element(By.CLASS_NAME, "c_cont").size["height"]
         return top_height + dl_height + cont_height
 
     @staticmethod
@@ -137,7 +140,7 @@ class Driver:
 
         Returns: int
         """
-        top_height = c_main.find_element_by_class_name("top").size["height"]
+        top_height = c_main.find_element(By.CLASS_NAME, "top").size["height"]
         return top_height
 
     def delete_one_carousel_control(self) -> None:
