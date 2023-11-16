@@ -15,9 +15,9 @@ from jinja2 import Environment, PackageLoader
 
 import config
 from app.utils.entities import Content, Image
-# from app.utils.weather_crawler import WeatherCrawler
-# from app.utils.weather_caiyun import WeatherCaiyun
-from app.utils.weather_hefeng import WeatherHeFeng
+from app.utils.weather_crawler import WeatherCrawler
+# from app.utils.weather_caiyun import WeatherCaiyun as WeatherCrawler
+# from app.utils.weather_hefeng import WeatherHeFeng as WeatherCrawler
 from app.utils.screenshot_lib import Driver
 
 sentry_sdk.init(dsn=config.sentry_dsn)
@@ -72,8 +72,8 @@ def render_html() -> str:
     content = Content()
 
     # 获取天气信息
-    with WeatherHeFeng() as wea:
-        wea: WeatherHeFeng
+    with WeatherCrawler() as wea:
+        wea: WeatherCrawler
         _, title = get_edm_config()
         if not title:
             content.title = f"早安，亲爱的你"
