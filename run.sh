@@ -1,5 +1,5 @@
 # !/bin/zsh
 
-cd /home/ikaros/myweb/auto-mail
+cd /home/ikaros/repo/daily_mail
 
-/home/ikaros/.pyenv/versions/testenv/bin/python run.py
+/home/ikaros/.pyenv/shims/python run.py
