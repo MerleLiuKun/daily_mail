@@ -23,8 +23,7 @@ from app.utils.screenshot_lib import Driver
 sentry_sdk.init(dsn=config.sentry_dsn)
 
 
-def get_edm_config():
-    day = date.today().isoformat()
+def get_edm_config(day: str):
     conn = psycopg2.connect(
         database=config.PG_DB, user=config.PG_USER,
         password=config.PG_PASSWORD, host=config.PG_HOST
@@ -42,8 +41,7 @@ def get_edm_config():
     return "", ""
 
 
-def update_edm_config(poetry, hitokoto):
-    day = date.today().isoformat()
+def update_edm_config(day, subject, title, poetry, hitokoto):
     conn = psycopg2.connect(
         database=config.PG_DB, user=config.PG_USER,
         password=config.PG_PASSWORD, host=config.PG_HOST
@@ -51,10 +49,23 @@ def update_edm_config(poetry, hitokoto):
     try:
         with conn.cursor() as cur:
             cur.execute(
-                "UPDATE official_edmconfig SET poetry=%s,hitokoto=%s "
-                "WHERE day=%s;",
-                (poetry, hitokoto, day)
+                "SELECT day FROM official_edmconfig "
+                "WHERE day=%s",
+                (day,)
             )
+            if not cur.fetchone():
+                cur.execute(
+                    "INSERT INTO official_edmconfig (day,subject,title,poetry,hitokoto) "
+                    "VALUES (%s,%s,%s,%s,%s)",
+                    (day, subject, title, poetry, hitokoto)
+                )
+            else:
+                cur.execute(
+                    "UPDATE official_edmconfig "
+                    "SET subject=%s,title=%s,poetry=%s,hitokoto=%s "
+                    "WHERE day=%s",
+                    (subject, title, poetry, hitokoto, day)
+                )
             conn.commit()
     except Exception as e:
         conn.rollback()
@@ -63,7 +74,7 @@ def update_edm_config(poetry, hitokoto):
         conn.close()
 
 
-def render_html() -> str:
+def render_html() -> (str, str):
     """
     获取数据并渲染 HTML 文件
     """
@@ -71,12 +82,20 @@ def render_html() -> str:
     # 初始化基础信息类
     content = Content()
 
+    day = date.today().isoformat()
+
+    # 获取自定义配置
+    subject, title = get_edm_config(day=day)
+
+    # 处理 subject
+    if not subject:
+        subject = "玲玲大宝宝"
+
     # 获取天气信息
     with WeatherCrawler() as wea:
         wea: WeatherCrawler
-        _, title = get_edm_config()
         if not title:
-            content.title = f"早安，亲爱的你"
+            content.title = "早安，亲爱的你"
         else:
             content.title = title
         wea_tips = "快来看今天的天气呀"
@@ -92,7 +111,12 @@ def render_html() -> str:
     # 获取今日诗词
     content.shici_say = get_gushici_say()
 
-    update_edm_config(poetry=content.shici_say, hitokoto=content.hitokoto_say)
+    update_edm_config(
+        day=day,
+        subject=subject,
+        title=content.title,
+        poetry=content.shici_say, hitokoto=content.hitokoto_say
+    )
 
     # 生成 HTML 文件
     env = Environment(loader=PackageLoader("app"))
@@ -101,7 +125,7 @@ def render_html() -> str:
         content=content, weather_data=weather_data, image=image,
         wea_tips=wea_tips,
     )
-    return html_content
+    return html_content, subject
 
 
 def get_hitokoto_say() -> str:
@@ -161,17 +185,13 @@ def get_image_code() -> Image:
     return img
 
 
-def send_email(html):
+def send_email(subject, html):
     def _format_address(name, addr):
         return formataddr((Header(name, "utf-8").encode(), addr))
 
     message = MIMEText(html, "html", "utf-8")
     message["From"] = _format_address("Ikaros", config.sender)
     message["To"] = _format_address("柠柠", config.receiver)
-
-    subject, _ = get_edm_config()
-    if not subject:
-        subject = "玲玲大宝宝"
     message["Subject"] = Header(subject, "utf-8")
 
     try:
@@ -191,7 +211,7 @@ def handler():
     print(f"Begin task at {datetime.now().isoformat()}")
     # HTML 文件
     try:
-        html = render_html()
+        html, subject = render_html()
         # 存储一下每日的html源
         month = date.today().strftime("%Y%m")
         p = Path(config.IMAGE_FILE_PATH) / month
@@ -205,7 +225,10 @@ def handler():
         return False
 
     # 下发邮件
-    send_email(html)
+    send_email(
+        subject=subject,
+        html=html,
+    )
     print(f"End task at {datetime.now().isoformat()}")
 
 
