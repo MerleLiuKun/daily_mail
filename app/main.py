@@ -30,7 +30,7 @@ def get_edm_config(day: str):
     )
     with conn.cursor() as cur:
         cur.execute(
-            "SELECT subject,title FROM official_edmconfig "
+            "SELECT subject,title,poetry,hitokoto FROM official_edmconfig "
             "WHERE day=%s;",
             (day,)
         )
@@ -38,7 +38,7 @@ def get_edm_config(day: str):
         if row:
             return row
     conn.close()
-    return "", ""
+    return "", "", "", ""
 
 
 def update_edm_config(day, subject, title, poetry, hitokoto):
@@ -46,7 +46,7 @@ def update_edm_config(day, subject, title, poetry, hitokoto):
         database=config.PG_DB, user=config.PG_USER,
         password=config.PG_PASSWORD, host=config.PG_HOST
     )
-    now = datetime.now()
+    now = datetime.utcnow()
     try:
         with conn.cursor() as cur:
             cur.execute(
@@ -87,7 +87,7 @@ def render_html() -> (str, str):
     day = date.today().isoformat()
 
     # 获取自定义配置
-    subject, title = get_edm_config(day=day)
+    subject, title, poetry, hitokoto = get_edm_config(day=day)
 
     # 处理 subject
     if not subject:
@@ -107,11 +107,17 @@ def render_html() -> (str, str):
     image = get_image_code()
 
     # 获取一言
-    content.hitokoto_say = get_hitokoto_say()
-    print(f"获得一言： {content.hitokoto_say}")
+    if hitokoto:
+        content.hitokoto_say = hitokoto
+    else:
+        content.hitokoto_say = get_hitokoto_say()
+        print(f"获得一言： {content.hitokoto_say}")
 
     # 获取今日诗词
-    content.shici_say = get_gushici_say()
+    if poetry:
+        content.shici_say = poetry
+    else:
+        content.shici_say = get_gushici_say()
 
     update_edm_config(
         day=day,
