@@ -46,6 +46,7 @@ def update_edm_config(day, subject, title, poetry, hitokoto):
         database=config.PG_DB, user=config.PG_USER,
         password=config.PG_PASSWORD, host=config.PG_HOST
     )
+    now = datetime.now()
     try:
         with conn.cursor() as cur:
             cur.execute(
@@ -55,16 +56,17 @@ def update_edm_config(day, subject, title, poetry, hitokoto):
             )
             if not cur.fetchone():
                 cur.execute(
-                    "INSERT INTO official_edmconfig (day,subject,title,poetry,hitokoto) "
-                    "VALUES (%s,%s,%s,%s,%s)",
-                    (day, subject, title, poetry, hitokoto)
+                    "INSERT INTO official_edmconfig "
+                    "(day,subject,title,poetry,hitokoto,created,modified) "
+                    "VALUES (%s,%s,%s,%s,%s,%s,%s)",
+                    (day, subject, title, poetry, hitokoto, now, now)
                 )
             else:
                 cur.execute(
                     "UPDATE official_edmconfig "
-                    "SET subject=%s,title=%s,poetry=%s,hitokoto=%s "
+                    "SET subject=%s,title=%s,poetry=%s,hitokoto=%s,modified=%s "
                     "WHERE day=%s",
-                    (subject, title, poetry, hitokoto, day)
+                    (subject, title, poetry, hitokoto, day, now)
                 )
             conn.commit()
     except Exception as e:
