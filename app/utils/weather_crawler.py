@@ -26,7 +26,10 @@ class WeatherCrawler:
 
     def get_weather_html(self) -> Optional[BeautifulSoup]:
         try:
-            resp = requests.get(self.base_url + self.area)
+            headers = {
+                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+            }
+            resp = requests.get(self.base_url + self.area, headers=headers)
             soup = BeautifulSoup(resp.text, "lxml")
             return soup
         except Exception as e:
