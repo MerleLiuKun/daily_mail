@@ -203,8 +203,9 @@ def send_email(subject, html):
     message["Subject"] = Header(subject, "utf-8")
 
     try:
-        smtp_obj = smtplib.SMTP("smtp.qq.com", port=587)
+        smtp_obj = smtplib.SMTP("", port=587)
         smtp_obj.ehlo("smtp.qq.com")
+        smtp_obj.starttls()
         smtp_obj.login(config.sender, config.email_password)
         smtp_obj.sendmail(config.sender, [config.receiver], message.as_string())
         print("邮件发送成功")
